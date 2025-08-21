@@ -1,11 +1,14 @@
 package iteration
 
-func Repeat(str string, freq int) (res string) {
+import "strings"
+
+func Repeat(str string, freq int) string {
+	var res strings.Builder
 	for range freq {
-		res += str
+		res.WriteString(str)
 	}
 
-	return
+	return res.String()
 }
 
 func main() {
