@@ -26,13 +26,31 @@ func TestDictionary(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	dictionary := Dictionary{}
-	word := "runat"
-	definition := "golang developer"
+	t.Run("New word", func(t *testing.T) {
+		dictionary := Dictionary{}
+		word := "runat"
+		definition := "golang developer"
 
-	dictionary.Add(word, definition)
+		err := dictionary.Add(word, definition)
 
-	assertDefinition(t, dictionary, word, definition)
+		assertError(t, err, nil)
+		assertDefinition(t, dictionary, word, definition)
+
+	})
+
+	t.Run("Existing word", func(t *testing.T) {
+		word := "runat"
+		definition := "golang developer"
+
+		dictionary := Dictionary{word: definition}
+
+		err := dictionary.Add(word, definition)
+
+		assertError(t, err, ErrWordExists)
+		assertDefinition(t, dictionary, word, definition)
+
+	})
+
 }
 
 func assertError(t testing.TB, got, want error) {
