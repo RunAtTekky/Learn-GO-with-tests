@@ -25,6 +25,16 @@ func TestDictionary(t *testing.T) {
 	})
 }
 
+func TestAdd(t *testing.T) {
+	dictionary := Dictionary{}
+	word := "runat"
+	definition := "golang developer"
+
+	dictionary.Add(word, definition)
+
+	assertDefinition(t, dictionary, word, definition)
+}
+
 func assertError(t testing.TB, got, want error) {
 	t.Helper()
 	if got != want {
@@ -37,4 +47,14 @@ func assertString(t testing.TB, got, want string) {
 	if got != want {
 		t.Errorf("got %q but want %q", got, want)
 	}
+}
+
+func assertDefinition(t testing.TB, dict Dictionary, word, definition string) {
+	got, err := dict.Search(word)
+
+	if err != nil {
+		t.Fatal("Should find added word: ", err)
+	}
+
+	assertString(t, got, definition)
 }
