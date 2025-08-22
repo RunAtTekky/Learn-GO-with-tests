@@ -50,7 +50,31 @@ func TestAdd(t *testing.T) {
 		assertDefinition(t, dictionary, word, definition)
 
 	})
+}
 
+func TestUpdate(t *testing.T) {
+	t.Run("Updating already present word test", func(t *testing.T) {
+		word := "go"
+		old_definition := "fav programming language"
+
+		dict := Dictionary{word: old_definition}
+
+		new_definition := "favourite programming language"
+		err := dict.Update(word, new_definition)
+
+		assertError(t, err, nil)
+		assertDefinition(t, dict, word, new_definition)
+	})
+
+	t.Run("Updating not present word test", func(t *testing.T) {
+		dict := Dictionary{}
+		word := "go"
+		new_definition := "favourite programming language"
+
+		err := dict.Update(word, new_definition)
+
+		assertError(t, err, ErrWordDoesNotExists)
+	})
 }
 
 func assertError(t testing.TB, got, want error) {
