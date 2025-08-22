@@ -73,7 +73,28 @@ func TestUpdate(t *testing.T) {
 
 		err := dict.Update(word, new_definition)
 
-		assertError(t, err, ErrWordDoesNotExists)
+		assertError(t, err, ErrCannotUpdateWordDoesNotExist)
+	})
+}
+
+func TestDelete(t *testing.T) {
+	t.Run("Delete existing word", func(t *testing.T) {
+		word := "runat"
+		definition := "golang developer"
+
+		dict := Dictionary{word: definition}
+
+		err := dict.Delete(word)
+
+		assertError(t, err, nil)
+	})
+
+	t.Run("Delete non-existing word", func(t *testing.T) {
+		dict := Dictionary{}
+
+		err := dict.Delete("runat")
+
+		assertError(t, err, ErrCannotDeleteWordDoesNotExist)
 	})
 }
 

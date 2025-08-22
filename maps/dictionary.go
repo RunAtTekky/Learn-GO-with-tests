@@ -9,9 +9,10 @@ func (e DictionaryErr) Error() string {
 }
 
 const (
-	ErrNoEntryFound      = DictionaryErr("No entry found for your word")
-	ErrWordExists        = DictionaryErr("Cannot ADD word as it already exists")
-	ErrWordDoesNotExists = DictionaryErr("The word cannot be UPDATED as it does not exist")
+	ErrNoEntryFound                 = DictionaryErr("No entry found for your word")
+	ErrWordExists                   = DictionaryErr("Cannot ADD word as it already exists")
+	ErrCannotUpdateWordDoesNotExist = DictionaryErr("The word cannot be UPDATED as it does not exist")
+	ErrCannotDeleteWordDoesNotExist = DictionaryErr("The word cannot be DELETED as it does not exist")
 )
 
 func (d Dictionary) Search(key string) (val string, err error) {
@@ -45,7 +46,22 @@ func (d Dictionary) Update(key, new_value string) error {
 	case nil:
 		d[key] = new_value
 	case ErrNoEntryFound:
-		return ErrWordDoesNotExists
+		return ErrCannotUpdateWordDoesNotExist
+	default:
+		return err
+	}
+
+	return nil
+}
+
+func (d Dictionary) Delete(key string) error {
+	_, err := d.Search(key)
+
+	switch err {
+	case ErrNoEntryFound:
+		return ErrCannotDeleteWordDoesNotExist
+	case nil:
+		delete(d, key)
 	default:
 		return err
 	}
