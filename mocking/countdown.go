@@ -14,6 +14,11 @@ const (
 	WRITE            = "write"
 )
 
+type Sleeper interface {
+	Sleep()
+}
+
+// Configurable Struct where we pass the duration of each sleep required and the sleep method to be used
 type ConfigurableSleeper struct {
 	duration time.Duration
 	sleep    func(time.Duration)
@@ -23,6 +28,7 @@ func (c *ConfigurableSleeper) Sleep() {
 	c.sleep(c.duration)
 }
 
+// Structure to mock sleeping
 type SpyTime struct {
 	durationSlept time.Duration
 }
@@ -31,10 +37,7 @@ func (s *SpyTime) SetDurationSlept(duration time.Duration) {
 	s.durationSlept = duration
 }
 
-type Sleeper interface {
-	Sleep()
-}
-
+// Implements sleeper and writer interfaces and keeps track of Order of operations
 type SpyCountdownOperations struct {
 	Calls []string
 }
@@ -46,12 +49,6 @@ func (s *SpyCountdownOperations) Sleep() {
 func (s *SpyCountdownOperations) Write(p []byte) (n int, err error) {
 	s.Calls = append(s.Calls, WRITE)
 	return
-}
-
-type DefaultSleeper struct{}
-
-func (d *DefaultSleeper) Sleep() {
-	time.Sleep(1 * time.Second)
 }
 
 func Countdown(writer io.Writer, sleeper Sleeper) {
