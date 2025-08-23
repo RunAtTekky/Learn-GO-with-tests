@@ -1,27 +1,28 @@
 package main
 
 import (
-	"bytes"
+	"reflect"
 	"testing"
 )
 
 func TestCountdown(t *testing.T) {
-	buffer := &bytes.Buffer{}
-	spySleeper := &SpySleeper{}
+	spySleepPrinter := &SpyCountdownOperations{}
 
-	Countdown(buffer, spySleeper)
+	Countdown(spySleepPrinter, spySleepPrinter)
 
-	got := buffer.String()
-	want := `3
-2
-1
-GO!`
-
-	if got != want {
-		t.Errorf("got %q but want %q", got, want)
+	got := spySleepPrinter.Calls
+	want := []string{
+		"sleep",
+		"write", // 3
+		"sleep",
+		"write", // 2
+		"sleep",
+		"write", // 1
+		"sleep",
+		"write", // GO!
 	}
 
-	if spySleeper.Calls != 3 {
-		t.Errorf("not enough calls to sleeper, got %d", spySleeper.Calls)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got %q but want %q", got, want)
 	}
 }
