@@ -14,6 +14,23 @@ const (
 	WRITE            = "write"
 )
 
+type ConfigurableSleeper struct {
+	duration time.Duration
+	sleep    func(time.Duration)
+}
+
+func (c *ConfigurableSleeper) Sleep() {
+	c.sleep(c.duration)
+}
+
+type SpyTime struct {
+	durationSlept time.Duration
+}
+
+func (s *SpyTime) SetDurationSlept(duration time.Duration) {
+	s.durationSlept = duration
+}
+
 type Sleeper interface {
 	Sleep()
 }
@@ -47,6 +64,6 @@ func Countdown(writer io.Writer, sleeper Sleeper) {
 }
 
 func main() {
-	sleeper := &DefaultSleeper{}
+	sleeper := &ConfigurableSleeper{duration: 1 * time.Second, sleep: time.Sleep}
 	Countdown(os.Stdout, sleeper)
 }
