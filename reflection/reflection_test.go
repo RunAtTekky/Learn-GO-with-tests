@@ -1,0 +1,74 @@
+package reflection
+
+import (
+	"reflect"
+	"testing"
+)
+
+type Person struct {
+	Name string
+	Age  int
+	Addr Address
+}
+
+type Address struct {
+	City    string
+	Country string
+}
+
+func TestWalk(t *testing.T) {
+	cases := []struct {
+		Name          string
+		Input         interface{}
+		ExpectedCalls []string
+	}{
+		{
+			Name: "struct with only one field",
+			Input: struct {
+				Name string
+			}{"Chris"},
+			ExpectedCalls: []string{"Chris"},
+		},
+		{
+			Name: "struct with two fields",
+			Input: struct {
+				Name string
+				City string
+			}{"RunAt", "Delhi"},
+			ExpectedCalls: []string{"RunAt", "Delhi"},
+		},
+		{
+			Name: "struct with non-string value",
+			Input: struct {
+				Name string
+				Age  int
+			}{"RunAt", 22},
+			ExpectedCalls: []string{"RunAt"},
+		},
+		{
+			Name: "struct with a struct inside (nested structs)",
+			Input: Person{
+				Name: "RunAt",
+				Age:  22,
+				Addr: Address{
+					City:    "Delhi",
+					Country: "India",
+				},
+			},
+			ExpectedCalls: []string{"RunAt", "Delhi", "India"},
+		},
+	}
+
+	for _, test := range cases {
+		t.Run(test.Name, func(t *testing.T) {
+			var got []string
+			walk(test.Input, func(input string) {
+				got = append(got, input)
+			})
+
+			if !reflect.DeepEqual(got, test.ExpectedCalls) {
+				t.Errorf("got %v but wanted %v", got, test.ExpectedCalls)
+			}
+		})
+	}
+}

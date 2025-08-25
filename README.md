@@ -12,3 +12,5 @@ I am using the following [guide](https://quii.gitbook.io/learn-go-with-tests)
 - [Kitty](https://sw.kovidgoyal.net/kitty/) (Terminal Emulator)
 - [Zellij](https://zellij.dev/) (Terminal Multiplexer)
 
+## TDD Cycle
+![TDD Process](https://www.lambdatest.com/dynamic-pages/resources/images/learning-hub/tdd-process.png)
