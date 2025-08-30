@@ -34,7 +34,59 @@ type Line struct {
 	Y2 float64 `xml:"y2,attr"`
 }
 
-func TestSVGWriterAtMidnight(t *testing.T) {
+func TestSVGWriterHourHand(t *testing.T) {
+	cases := []struct {
+		time time.Time
+		line Line
+	}{
+		{
+			time: simpleTime(6, 0, 0),
+			line: Line{150, 150, 150, 200},
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(testName(tt.time), func(t *testing.T) {
+			b := bytes.Buffer{}
+			clockface.SVGWriter(&b, tt.time)
+
+			svg := SVG{}
+			xml.Unmarshal(b.Bytes(), &svg)
+
+			if !containsLine(tt.line, svg.Line) {
+				t.Errorf("Expected to find the second hand line %+v, in the SVG line %+v", tt.line, svg.Line)
+			}
+		})
+	}
+}
+
+func TestSVGWriterMinuteHand(t *testing.T) {
+	cases := []struct {
+		time time.Time
+		line Line
+	}{
+		{
+			time: simpleTime(0, 0, 0),
+			line: Line{150, 150, 150, 70},
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(testName(tt.time), func(t *testing.T) {
+			b := bytes.Buffer{}
+			clockface.SVGWriter(&b, tt.time)
+
+			svg := SVG{}
+			xml.Unmarshal(b.Bytes(), &svg)
+
+			if !containsLine(tt.line, svg.Line) {
+				t.Errorf("Expected to find the second hand line %+v, in the SVG line %+v", tt.line, svg.Line)
+			}
+		})
+	}
+}
+
+func TestSVGWriterSecondHand(t *testing.T) {
 	cases := []struct {
 		time time.Time
 		line Line
@@ -62,7 +114,6 @@ func TestSVGWriterAtMidnight(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func containsLine(a Line, lst []Line) bool {
@@ -72,8 +123,9 @@ func containsLine(a Line, lst []Line) bool {
 func TestSecondHandAtMidnight(t *testing.T) {
 	tm := time.Date(2025, time.July, 1, 0, 0, 0, 0, time.UTC)
 
+	var buf bytes.Buffer
 	want := clockface.Point{X: 150, Y: 150 - 90}
-	got := clockface.SecondHand(tm)
+	got := clockface.SecondHand(&buf, tm)
 
 	if got != want {
 		t.Errorf("got %v but want %v", got, want)
@@ -83,8 +135,9 @@ func TestSecondHandAtMidnight(t *testing.T) {
 func TestSecondHandAt30Seconds(t *testing.T) {
 	tm := time.Date(2025, time.July, 1, 0, 0, 30, 0, time.UTC)
 
+	var buf bytes.Buffer
 	want := clockface.Point{X: 150, Y: 150 + 90}
-	got := clockface.SecondHand(tm)
+	got := clockface.SecondHand(&buf, tm)
 
 	if got != want {
 		t.Errorf("got %v but want %v", got, want)

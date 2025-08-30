@@ -14,15 +14,14 @@ type Point struct {
 
 const (
 	secondHandLength = 90
+	minuteHandLength = 80
 	clockCentreX     = 150
 	clockCentreY     = 150
 )
 
-func SecondHand(t time.Time) Point {
-	p := secondHandPoint(t)
-
+func makeHand(p Point, length float64) Point {
 	// Scale
-	p = Point{p.X * secondHandLength, p.Y * secondHandLength}
+	p = Point{p.X * length, p.Y * length}
 
 	// Flip
 	p = Point{p.X, -p.Y}
@@ -33,13 +32,45 @@ func SecondHand(t time.Time) Point {
 	return p
 }
 
+func SecondHand(w io.Writer, t time.Time) Point {
+	p := makeHand(secondHandPoint(t), secondHandLength)
+
+	fmt.Fprintf(w, `<line x1="150" y1="150" x2="%.3f" y2="%.3f" style="fill:none;stroke:#f00;stroke-width:3px;"/>`, p.X, p.Y)
+
+	return p
+}
+
+func MinuteHand(w io.Writer, t time.Time) Point {
+	p := makeHand(minuteHandPoint(t), minuteHandLength)
+
+	fmt.Fprintf(w, `<line x1="150" y1="150" x2="%.3f" y2="%.3f" style="fill:none;stroke:#f00;stroke-width:3px;"/>`, p.X, p.Y)
+
+	return p
+}
 func secondsInRadians(t time.Time) float64 {
 	secondInFloat := float64(t.Second())
 	return math.Pi / (30 / secondInFloat)
 }
 
+func minutesInRadians(t time.Time) float64 {
+	minuteInFloat := float64(t.Minute())
+	return (secondsInRadians(t) / 60) + (math.Pi / (30 / minuteInFloat))
+}
+
+func hoursInRadians(t time.Time) float64 {
+	hoursInFloat := float64(t.Hour())
+	return (minutesInRadians(t) / 60) + (secondsInRadians(t) / 3600) + (math.Pi / (6 / hoursInFloat))
+}
+
 func secondHandPoint(t time.Time) Point {
-	angle := secondsInRadians(t)
+	return angleToPoint(secondsInRadians(t))
+}
+
+func minuteHandPoint(t time.Time) Point {
+	return angleToPoint(minutesInRadians(t))
+}
+
+func angleToPoint(angle float64) Point {
 	x := math.Sin(angle)
 	y := math.Cos(angle)
 
@@ -49,13 +80,9 @@ func secondHandPoint(t time.Time) Point {
 func SVGWriter(w io.Writer, t time.Time) {
 	io.WriteString(w, svgStart)
 	io.WriteString(w, bezel)
-	secondHandWriter(w, t)
+	SecondHand(w, t)
+	MinuteHand(w, t)
 	io.WriteString(w, svgEnd)
-}
-
-func secondHandWriter(w io.Writer, t time.Time) {
-	p := SecondHand(t)
-	fmt.Fprintf(w, `<line x1="150" y1="150" x2="%.3f" y2="%.3f" style="fill:none;stroke:#f00;stroke-width:3px;"/>`, p.X, p.Y)
 }
 
 const svgStart = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
