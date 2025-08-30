@@ -9,25 +9,32 @@ import (
 func TestSecondsInRadians(t *testing.T) {
 	cases := []struct {
 		time  time.Time
-		angle float64
+		point Point
 	}{
-		{simpleTime(0, 0, 30), math.Pi},
-		{simpleTime(0, 0, 0), 0},
-		{simpleTime(0, 0, 45), (math.Pi / 2) * 3},
-		{simpleTime(0, 0, 7), (math.Pi / 30) * 7},
+		{simpleTime(0, 0, 30), Point{0, -1}},
+		{simpleTime(0, 0, 45), Point{-1, 0}},
 	}
 
 	for _, tt := range cases {
 		t.Run(testName(tt.time), func(t *testing.T) {
-			want := tt.angle
-			got := secondsInRadians(tt.time)
+			want := tt.point
+			got := secondHandPoint(tt.time)
 
-			if got != want {
-				t.Errorf("got %v radians, but want %v", got, want)
+			if !roughlyEqualPoint(want, got) {
+				t.Errorf("got %v Point, but want %v", got, want)
 			}
 
 		})
 	}
+}
+
+func roughlyEqualFloat64(a, b float64) bool {
+	const threshold = 1e-7
+	return math.Abs(a-b) < threshold
+}
+
+func roughlyEqualPoint(a, b Point) bool {
+	return roughlyEqualFloat64(a.X, b.X) && roughlyEqualFloat64(a.Y, b.Y)
 }
 
 func simpleTime(hour, minute, second int) time.Time {
