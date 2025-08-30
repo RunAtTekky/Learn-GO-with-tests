@@ -3,12 +3,13 @@ package propertybased
 import (
 	"fmt"
 	"testing"
+	"testing/quick"
 )
 
 var (
 	tests = []struct {
 		roman  string
-		arabic int
+		arabic uint16
 	}{
 		{roman: "I", arabic: 1},
 		{roman: "II", arabic: 2},
@@ -59,5 +60,21 @@ func TestRomanToArabic(t *testing.T) {
 				t.Errorf("got %d but want %d", arabic, tt.arabic)
 			}
 		})
+	}
+}
+
+func TestPropertiesOfConversion(t *testing.T) {
+	assertion := func(arabic uint16) bool {
+		if arabic > 3999 {
+			return true
+		}
+		t.Log("testing", arabic)
+		roman := ConvertToRoman(arabic)
+		fromRoman := ConvertToArabic(roman)
+		return fromRoman == arabic
+	}
+
+	if err := quick.Check(assertion, &quick.Config{MaxCount: 1000}); err != nil {
+		t.Error("Failed checks", err)
 	}
 }
