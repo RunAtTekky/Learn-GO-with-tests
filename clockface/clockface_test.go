@@ -6,12 +6,33 @@ import (
 	"time"
 )
 
+func TestSecondHandPoint(t *testing.T) {
+	cases := []struct {
+		time  time.Time
+		point Point
+	}{
+		{simpleTime(0, 0, 30), Point{0, -1}},
+		{simpleTime(0, 0, 45), Point{-1, 0}},
+	}
+
+	for _, tt := range cases {
+		t.Run(testName(tt.time), func(t *testing.T) {
+			got := secondHandPoint(tt.time)
+
+			if !roughlyEqualPoint(got, tt.point) {
+				t.Fatalf("got %v point, but want %v point", got, tt.point)
+			}
+		})
+	}
+}
+
 func TestMinuteHandPoint(t *testing.T) {
 	cases := []struct {
 		time  time.Time
 		point Point
 	}{
 		{simpleTime(0, 30, 0), Point{0, -1}},
+		{simpleTime(0, 45, 0), Point{-1, 0}},
 	}
 
 	for _, tt := range cases {
@@ -23,7 +44,26 @@ func TestMinuteHandPoint(t *testing.T) {
 			}
 		})
 	}
+}
 
+func TestHourHandPoint(t *testing.T) {
+	cases := []struct {
+		time  time.Time
+		point Point
+	}{
+		{simpleTime(6, 0, 0), Point{0, -1}},
+		{simpleTime(21, 0, 0), Point{-1, 0}},
+	}
+
+	for _, tt := range cases {
+		t.Run(testName(tt.time), func(t *testing.T) {
+			got := hourHandPoint(tt.time)
+
+			if !roughlyEqualPoint(got, tt.point) {
+				t.Fatalf("got %v point, but want %v point", got, tt.point)
+			}
+		})
+	}
 }
 
 func TestHoursInRadians(t *testing.T) {
@@ -33,6 +73,7 @@ func TestHoursInRadians(t *testing.T) {
 	}{
 		{simpleTime(6, 0, 0), math.Pi},
 		{simpleTime(0, 0, 0), 0},
+		{simpleTime(21, 0, 0), math.Pi * 1.5},
 	}
 
 	for _, tt := range cases {
@@ -40,8 +81,8 @@ func TestHoursInRadians(t *testing.T) {
 			want := tt.angle
 			got := hoursInRadians(tt.time)
 
-			if got != want {
-				t.Errorf("got %v Radians, but wanted %v", got, want)
+			if !roughlyEqualFloat64(got, want) {
+				t.Fatalf("got %v Radians, but wanted %v", got, want)
 			}
 
 		})
@@ -62,7 +103,7 @@ func TestMinutesInRadians(t *testing.T) {
 			want := tt.angle
 			got := minutesInRadians(tt.time)
 
-			if got != want {
+			if !roughlyEqualFloat64(got, want) {
 				t.Errorf("got %v Radians, but wanted %v", got, want)
 			}
 
