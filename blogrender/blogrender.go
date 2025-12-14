@@ -1,21 +1,27 @@
 package blogrender
 
 import (
-	"bytes"
-	"fmt"
+	"html/template"
 	"io"
 )
 
-func Render(file io.Writer, post Post) error {
-	_, err := fmt.Fprintf(file, "<h1>%s</h1>\n", post.Title)
-	_, err = fmt.Fprintf(file, "<p>%s</p>\n", post.Description)
+const (
+	postTemplate = `<h1>{{.Title}}</h1>
+<p>{{.Description}}</p>
+Tags: <ul>{{range .Tags}}<li>{{.}}</li>{{end}}</ul>`
+)
 
-	buf := bytes.Buffer{}
-	for _, tag := range post.Tags {
-		fmt.Fprintf(&buf, "<li>%s</li>", tag)
+func Render(file io.Writer, post Post) error {
+
+	templ, err := template.New("blog").Parse(postTemplate)
+
+	if err != nil {
+		return err
 	}
 
-	tagsHTML := buf.String()
-	_, err = fmt.Fprintf(file, "Tags: <ul>%s</ul>", tagsHTML)
-	return err
+	if err := templ.Execute(file, post); err != nil {
+		return err
+	}
+
+	return nil
 }
