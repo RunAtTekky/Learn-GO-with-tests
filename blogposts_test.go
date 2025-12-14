@@ -19,8 +19,8 @@ func (s StubFailingFS) Open(name string) (fs.File, error) {
 
 func TestNewBlogPosts(t *testing.T) {
 	fs := fstest.MapFS{
-		"hello-world.md":  {Data: []byte("Post 1")},
-		"hello-world2.md": {Data: []byte("Post 2")},
+		"hello-world.md":  {Data: []byte("Title: Post 1")},
+		"hello-world2.md": {Data: []byte("Title: Post 2")},
 	}
 
 	posts, err := blogposts.NewPostsFromFS(fs)
