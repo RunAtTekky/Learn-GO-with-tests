@@ -14,7 +14,7 @@ func NewPostsFromFS(filesystem fs.FS) ([]Post, error) {
 
 	var posts []Post
 	for _, file := range dir {
-		post, err := getPost(filesystem, file)
+		post, err := getPost(filesystem, file.Name())
 
 		if err != nil {
 			return nil, err // TODO: Needs clarification
@@ -25,15 +25,20 @@ func NewPostsFromFS(filesystem fs.FS) ([]Post, error) {
 	return posts, nil
 }
 
-func getPost(filesystem fs.FS, file fs.DirEntry) (Post, error) {
-
-	postFile, err := filesystem.Open(file.Name())
+func getPost(filesystem fs.FS, fileName string) (Post, error) {
+	postFile, err := filesystem.Open(fileName)
 	if err != nil {
 		return Post{}, nil
 	}
 
 	defer postFile.Close()
 
+	post, err := newPost(postFile)
+	return post, err
+
+}
+
+func newPost(postFile io.Reader) (Post, error) {
 	postData, err := io.ReadAll(postFile)
 	if err != nil {
 		return Post{}, nil
