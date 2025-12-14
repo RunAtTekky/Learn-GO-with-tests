@@ -26,10 +26,17 @@ func newPost(postFile io.Reader) (Post, error) {
 		scanner.Scan()
 		return strings.TrimPrefix(scanner.Text(), tagName)
 	}
+	title := readMetaLine(titlePrefix)
+	description := readMetaLine(descriptionPrefix)
+	tags := strings.Split(readMetaLine(tagsPrefix), ", ")
+
+	var body string
+	// TODO: Read all the body
 
 	return Post{
-		Title:       readMetaLine(titlePrefix),
-		Description: readMetaLine(descriptionPrefix),
-		Tags:        strings.Split(readMetaLine(tagsPrefix), ", "),
+		Title:       title,
+		Description: description,
+		Tags:        tags,
+		Body:        body,
 	}, nil
 }
