@@ -56,10 +56,10 @@ func TestRender(t *testing.T) {
 		}
 
 		got := buf.String()
-		want := `<ol><li><a href="/post/hello-world">Hello World</a></li><li><a href="/post/hello-world-2">Hola Mundo</a></li></ol>`
+		want := `<ol><li><a href="/post/hello-world">Hello World</a></li><li><a href="/post/hola-mundo">Hola Mundo</a></li></ol>`
 
 		if got != want {
-			t.Errorf("got:\n%sbut want:\n%s", got, want)
+			t.Errorf("got:\n%s\nbut want:\n%s", got, want)
 		}
 	})
 }

@@ -33,5 +33,16 @@ func NewPostRenderer() (*PostRenderer, error) {
 }
 
 func (pr *PostRenderer) RenderIndex(w io.Writer, posts []Post) error {
+	indexTemplate := `<ol>{{range .}}<li><a href="/post/{{.SanitizedTitle}}">{{.Title}}</a></li>{{end}}</ol>`
+
+	templ, err := template.New("index").Parse(indexTemplate)
+	if err != nil {
+		return err
+	}
+
+	if err := templ.Execute(w, posts); err != nil {
+		return err
+	}
+
 	return nil
 }
