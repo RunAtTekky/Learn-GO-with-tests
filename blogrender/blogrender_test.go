@@ -33,6 +33,35 @@ func TestRender(t *testing.T) {
 
 		approvals.VerifyString(t, buf.String())
 	})
+
+	t.Run("renders an index of posts", func(t *testing.T) {
+		posts := []blogrender.Post{
+			{
+				Title:       "Hello World",
+				Description: "Say Hello World",
+				Tags:        []string{"go", "tdd"},
+				Body:        "This is the body",
+			},
+			{
+				Title:       "Hola Mundo",
+				Description: "Say Hola Mundo",
+				Tags:        []string{"footy", "world-cup"},
+				Body:        "World Cup 2030 will be held in Europe/Spain",
+			},
+		}
+
+		buf := bytes.Buffer{}
+		if err := postRenderer.RenderIndex(&buf, posts); err != nil {
+			t.Fatal(err)
+		}
+
+		got := buf.String()
+		want := `<ol><li><a href="/post/hello-world">Hello World</a></li><li><a href="/post/hello-world-2">Hola Mundo</a></li></ol>`
+
+		if got != want {
+			t.Errorf("got:\n%sbut want:\n%s", got, want)
+		}
+	})
 }
 
 func BenchmarkRender(b *testing.B) {

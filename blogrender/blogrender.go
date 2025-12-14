@@ -31,3 +31,7 @@ func NewPostRenderer() (*PostRenderer, error) {
 
 	return &PostRenderer{templ: templ}, nil
 }
+
+func (pr *PostRenderer) RenderIndex(w io.Writer, posts []Post) error {
+	return nil
+}
