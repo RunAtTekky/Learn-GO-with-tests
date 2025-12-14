@@ -21,10 +21,18 @@ func TestNewBlogPosts(t *testing.T) {
 	const (
 		firstBody = `Title: Post 1
 Description: Description 1
-Tags: go, tdd`
+Tags: go, tdd
+---
+Golang
+is
+great`
 		secondBody = `Title: Post 2
 Description: Description 2
-Tags: college, footy`
+Tags: college, footy
+---
+Football
+is
+love`
 	)
 
 	fs := fstest.MapFS{
@@ -47,6 +55,9 @@ Tags: college, footy`
 		Title:       "Post 1",
 		Description: "Description 1",
 		Tags:        []string{"go", "tdd"},
+		Body: `Golang
+is
+great`,
 	}
 
 	assertPost(t, got, want)
