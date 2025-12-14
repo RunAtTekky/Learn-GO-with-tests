@@ -2,6 +2,8 @@ package blogrender
 
 import (
 	"embed"
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/parser"
 	"html/template"
 	"io"
 )
@@ -12,7 +14,8 @@ var (
 )
 
 type PostRenderer struct {
-	templ *template.Template
+	templ    *template.Template
+	mdParser *parser.Parser
 }
 
 func NewPostRenderer() (*PostRenderer, error) {
@@ -21,13 +24,27 @@ func NewPostRenderer() (*PostRenderer, error) {
 		return nil, err
 	}
 
-	return &PostRenderer{templ: templ}, nil
+	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
+	parser := parser.NewWithExtensions(extensions)
+
+	return &PostRenderer{templ: templ, mdParser: parser}, nil
 }
 
 func (pr *PostRenderer) Render(file io.Writer, post Post) error {
-	return pr.templ.ExecuteTemplate(file, "blog.gohtml", post)
+	return pr.templ.ExecuteTemplate(file, "blog.gohtml", newPostVM(post, pr))
 }
 
 func (pr *PostRenderer) RenderIndex(w io.Writer, posts []Post) error {
 	return pr.templ.ExecuteTemplate(w, "index.gohtml", posts)
+}
+
+type postViewModel struct {
+	Post
+	HTMLbody template.HTML
+}
+
+func newPostVM(p Post, pr *PostRenderer) postViewModel {
+	vm := postViewModel{Post: p}
+	vm.HTMLbody = template.HTML(markdown.ToHTML([]byte(p.Body), pr.mdParser, nil))
+	return vm
 }

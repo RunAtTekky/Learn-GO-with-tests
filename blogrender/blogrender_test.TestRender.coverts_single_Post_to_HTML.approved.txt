@@ -24,6 +24,7 @@
 <p>Say Hello World</p>
 
 Tags: <ul><li>go</li><li>tdd</li></ul>
+This is the body
 
 </main>
 <footer>
