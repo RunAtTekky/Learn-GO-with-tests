@@ -7,7 +7,7 @@ import (
 type Post struct {
 }
 
-func NewPostsFromFS(filesystem fs.FS) []Post {
+func NewPostsFromFS(filesystem fs.FS) ([]Post, error) {
 	dir, _ := fs.ReadDir(filesystem, ".")
 
 	var posts []Post
@@ -15,5 +15,5 @@ func NewPostsFromFS(filesystem fs.FS) []Post {
 		posts = append(posts, Post{})
 	}
 
-	return posts
+	return posts, nil
 }
