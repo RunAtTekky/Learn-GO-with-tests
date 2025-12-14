@@ -9,23 +9,26 @@ import (
 type Post struct {
 	Title       string
 	Description string
+	Tags        []string
 }
 
 const (
 	titlePrefix       = `Title: `
 	descriptionPrefix = `Description: `
+	tagsPrefix        = `Tags: `
 )
 
 func newPost(postFile io.Reader) (Post, error) {
 	scanner := bufio.NewScanner(postFile)
 
-	readLine := func(tagName string) string {
+	readMetaLine := func(tagName string) string {
 		scanner.Scan()
 		return strings.TrimPrefix(scanner.Text(), tagName)
 	}
 
 	return Post{
-		Title:       readLine(titlePrefix),
-		Description: readLine(descriptionPrefix),
+		Title:       readMetaLine(titlePrefix),
+		Description: readMetaLine(descriptionPrefix),
+		Tags:        strings.Split(readMetaLine(tagsPrefix), ", "),
 	}, nil
 }
