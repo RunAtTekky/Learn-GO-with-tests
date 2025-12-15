@@ -1,32 +1,38 @@
 package arrays
 
-// Returns sum of a slice
-func Sum(numbers []int) (sum int) {
-	for _, val := range numbers {
-		sum += val
+func Reduce[T any](collection []T, combining_function func(T, T) T, initialVal T) T {
+	result := initialVal
+	for _, val := range collection {
+		result = combining_function(result, val)
 	}
-	return
+	return result
+}
+
+// Returns sum of a slice
+func Sum(numbers []int) int {
+	adder := func(res, x int) int { return res + x }
+	return Reduce(numbers, adder, 0)
 }
 
 // Returns a slice with sum of all slices
 func SumAll(numbers_to_sum ...[]int) []int {
-	n := len(numbers_to_sum)
-	res := make([]int, n)
-
-	for i, numbers := range numbers_to_sum {
-		res[i] = Sum(numbers)
+	allAdder := func(res, x []int) []int {
+		return append(res, Sum(x))
 	}
-	return res
+
+	return Reduce(numbers_to_sum, allAdder, []int{})
 }
 
 // Returns a slice with sum of all slices except first element of each slice
 func SumTails(tails_to_sum ...[]int) (res []int) {
-	for _, numbers := range tails_to_sum {
-		if len(numbers) == 0 {
-			res = append(res, 0)
+	tailAdder := func(res, x []int) []int {
+		if len(x) == 0 {
+			return append(res, 0)
 		} else {
-			res = append(res, Sum(numbers[1:]))
+			tail := x[1:]
+			return append(res, Sum(tail))
 		}
 	}
-	return
+
+	return Reduce(tails_to_sum, tailAdder, []int{})
 }
