@@ -62,6 +62,45 @@ func TestSumTails(t *testing.T) {
 	})
 }
 
+func TestBadBank(t *testing.T) {
+	const (
+		RealMadrid = `Real Madrid`
+		PSG        = `PSG`
+		Barcelona  = `Barcelona`
+		Juventus   = `Juventus`
+		Chelsea    = `Chelsea`
+	)
+	transactions := []Transaction{
+		{
+			From: PSG,
+			To:   Barcelona,
+			Sum:  222,
+		},
+		{
+			From: Juventus,
+			To:   RealMadrid,
+			Sum:  100,
+		},
+		{
+			From: RealMadrid,
+			To:   Chelsea,
+			Sum:  120,
+		},
+	}
+
+	balance_PSG := BalanceFor(transactions, PSG)
+	balance_Real_Madrid := BalanceFor(transactions, RealMadrid)
+	balance_Barcelona := BalanceFor(transactions, Barcelona)
+	balance_Juventus := BalanceFor(transactions, Juventus)
+	balance_Chelsea := BalanceFor(transactions, Chelsea)
+
+	AssertEqual(t, balance_PSG, -222)
+	AssertEqual(t, balance_Real_Madrid, -20)
+	AssertEqual(t, balance_Barcelona, 222)
+	AssertEqual(t, balance_Juventus, -100)
+	AssertEqual(t, balance_Chelsea, 120)
+}
+
 func TestReduce(t *testing.T) {
 	t.Run("Test multiplying of all elements", func(t *testing.T) {
 		numbers := []int{1, 2, 3, 4, 5}

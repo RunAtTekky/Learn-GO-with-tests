@@ -1,5 +1,14 @@
 package arrays
 
+type Transaction struct {
+	From, To string
+	Sum      int
+}
+
+func BalanceFor(transactions []Transaction, name string) int {
+	return 0
+}
+
 func Reduce[T any](collection []T, combining_function func(T, T) T, initialVal T) T {
 	result := initialVal
 	for _, val := range collection {
