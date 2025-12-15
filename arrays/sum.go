@@ -6,18 +6,22 @@ type Transaction struct {
 }
 
 func BalanceFor(transactions []Transaction, name string) float64 {
-	balance := 0.0
-	for _, transaction := range transactions {
-		if transaction.From == name {
-			balance -= transaction.Sum
-		} else if transaction.To == name {
-			balance += transaction.Sum
+	adjustBalance := func(curr_balance float64, t Transaction) float64 {
+		if t.From == name {
+			return curr_balance - t.Sum
 		}
+
+		if t.To == name {
+			return curr_balance + t.Sum
+		}
+
+		return curr_balance
 	}
-	return balance
+
+	return Reduce(transactions, adjustBalance, 0.0)
 }
 
-func Reduce[T any](collection []T, combining_function func(T, T) T, initialVal T) T {
+func Reduce[A, B any](collection []A, combining_function func(B, A) B, initialVal B) B {
 	result := initialVal
 	for _, val := range collection {
 		result = combining_function(result, val)
