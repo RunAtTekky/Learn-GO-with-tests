@@ -5,20 +5,33 @@ type Transaction struct {
 	Sum      float64
 }
 
-func BalanceFor(transactions []Transaction, name string) float64 {
-	adjustBalance := func(curr_balance float64, t Transaction) float64 {
-		if t.From == name {
-			return curr_balance - t.Sum
-		}
+type Account struct {
+	Name    string
+	Balance float64
+}
 
-		if t.To == name {
-			return curr_balance + t.Sum
-		}
+func NewTransaction(from, to Account, sum float64) Transaction {
+	return Transaction{From: from.Name, To: to.Name, Sum: sum}
+}
 
-		return curr_balance
+func BalanceFor(transactions []Transaction, account Account) Account {
+	return Reduce(
+		transactions,
+		applyTransaction,
+		account,
+	)
+}
+
+func applyTransaction(account Account, t Transaction) Account {
+	if t.From == account.Name {
+		account.Balance -= t.Sum
 	}
 
-	return Reduce(transactions, adjustBalance, 0.0)
+	if t.To == account.Name {
+		account.Balance += t.Sum
+	}
+
+	return account
 }
 
 func Reduce[A, B any](collection []A, combining_function func(B, A) B, initialVal B) B {
