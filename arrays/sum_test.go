@@ -61,3 +61,57 @@ func TestSumTails(t *testing.T) {
 		check_sums(t, got, want)
 	})
 }
+
+func TestReduce(t *testing.T) {
+	t.Run("Test multiplying of all elements", func(t *testing.T) {
+		numbers := []int{1, 2, 3, 4, 5}
+		multiply := func(res, x int) int {
+			return res * x
+		}
+
+		got := Reduce(numbers, multiply, 1)
+		want := 120
+
+		AssertEqual(t, got, want)
+	})
+	t.Run("Test concatenation of all strings", func(t *testing.T) {
+		names := []string{"neymar", "messi", "ronaldo"}
+
+		concat := func(res, x string) string {
+			return res + x
+		}
+
+		got := Reduce(names, concat, "")
+		want := "neymarmessironaldo"
+
+		AssertEqual(t, got, want)
+	})
+}
+
+func AssertEqual[T comparable](t *testing.T, got, want T) {
+	t.Helper()
+	if got != want {
+		t.Fatalf("got %+v, want %+v", got, want)
+	}
+}
+
+func AssertNotEqual[T comparable](t *testing.T, got, want T) {
+	t.Helper()
+	if got == want {
+		t.Fatalf("Did not want %+v", got)
+	}
+}
+
+func AssertTrue(t *testing.T, got bool) {
+	t.Helper()
+	if !got {
+		t.Fatalf("got %v but want true", got)
+	}
+}
+
+func AssertFalse(t *testing.T, got bool) {
+	t.Helper()
+	if got {
+		t.Fatalf("got %v but want false", got)
+	}
+}
