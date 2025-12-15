@@ -62,6 +62,17 @@ func TestSumTails(t *testing.T) {
 	})
 }
 
+func TestFind(t *testing.T) {
+	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	firstEven, found := Find(numbers, func(x int) bool {
+		return x%2 == 0
+	})
+
+	AssertTrue(t, found)
+	AssertEqual(t, firstEven, 2)
+}
+
 func TestBadBank(t *testing.T) {
 	var (
 		RealMadrid = Account{Name: `Real Madrid`, Balance: 0}

@@ -10,6 +10,16 @@ type Account struct {
 	Balance float64
 }
 
+func Find[T any](collection []T, predicate func(T) bool) (val T, found bool) {
+	for _, v := range collection {
+		if predicate(v) {
+			return v, true
+		}
+	}
+
+	return val, false
+}
+
 func NewTransaction(from, to Account, sum float64) Transaction {
 	return Transaction{From: from.Name, To: to.Name, Sum: sum}
 }
