@@ -3,7 +3,7 @@ package generics
 import "testing"
 
 func TestStack(t *testing.T) {
-	t.Run("Test stack", func(t *testing.T) {
+	t.Run("Test Integer Stack", func(t *testing.T) {
 		myNewStack := new(Stack[int])
 
 		AssertTrue(t, myNewStack.IsEmpty())
@@ -22,6 +22,33 @@ func TestStack(t *testing.T) {
 		AssertTrue(t, ok)
 
 		AssertEqual(t, val, 7)
+		AssertTrue(t, myNewStack.IsEmpty())
+	})
+
+	t.Run("Test String Stack", func(t *testing.T) {
+		myNewStack := new(Stack[string])
+
+		const (
+			messi   = `MESSI`
+			ronaldo = `RONALDO`
+		)
+
+		AssertTrue(t, myNewStack.IsEmpty())
+
+		myNewStack.Push(ronaldo)
+		AssertFalse(t, myNewStack.IsEmpty())
+
+		myNewStack.Push(messi)
+
+		val, ok := myNewStack.Pop()
+		AssertTrue(t, ok)
+
+		AssertEqual(t, val, messi)
+
+		val, ok = myNewStack.Pop()
+		AssertTrue(t, ok)
+
+		AssertEqual(t, val, ronaldo)
 		AssertTrue(t, myNewStack.IsEmpty())
 	})
 }
