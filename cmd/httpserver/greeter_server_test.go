@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/alecthomas/assert/v2"
+	"github.com/docker/docker/api/types/build"
 	go_specs_greet "github.com/runattekky/go-specs-greet"
 	"github.com/runattekky/go-specs-greet/specifications"
 	"github.com/testcontainers/testcontainers-go"
@@ -20,6 +21,9 @@ func TestGreeterServer(t *testing.T) {
 			Context:       "../../.",
 			Dockerfile:    "./cmd/httpserver/Dockerfile",
 			PrintBuildLog: true,
+			BuildOptionsModifier: func(buildOptions *build.ImageBuildOptions) {
+				buildOptions.Version = build.BuilderBuildKit
+			},
 		},
 		ExposedPorts: []string{"8080:8080"},
 		WaitingFor:   wait.ForHTTP("/").WithPort("8080"),
