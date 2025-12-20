@@ -1,15 +1,12 @@
 package main
 
 import (
-	"log"
 	"net/http"
+
+	go_specs_greet "github.com/runattekky/go-specs-greet"
 )
 
 func main() {
-	handler := http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-	})
-
-	if err := http.ListenAndServe(":8080", handler); err != nil {
-		log.Fatal(err)
-	}
+	handler := http.HandlerFunc(go_specs_greet.Handler)
+	http.ListenAndServe(":8080", handler)
 }
