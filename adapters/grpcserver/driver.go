@@ -16,7 +16,7 @@ func (d Driver) Greet(name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer conn.close()
+	defer conn.Close()
 
 	client := NewGreeterClient(conn)
 
