@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/runattekky/go-specs-greet/adapters/grpcserver"
+	"github.com/runattekky/go-specs-greet/domain/interactions"
 	"google.golang.org/grpc"
 )
 
@@ -28,5 +29,5 @@ type GreetServer struct {
 }
 
 func (g GreetServer) Greet(ctx context.Context, request *grpcserver.GreetRequest) (*grpcserver.GreetReply, error) {
-	return &grpcserver.GreetReply{Message: "fix me"}, nil
+	return &grpcserver.GreetReply{Message: interactions.Greet(request.Name)}, nil
 }
