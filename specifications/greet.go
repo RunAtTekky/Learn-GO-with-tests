@@ -16,3 +16,14 @@ func GreetSpecification(t testing.TB, greeter Greeter) {
 	assert.NoError(t, err)
 	assert.Equal(t, "Hello, RunAt", got)
 }
+
+type MeanGreeter interface {
+	Curse(name string) (string, error)
+}
+
+func MeanSpecification(t testing.TB, meany MeanGreeter) {
+	got, err := meany.Curse("RunAt")
+
+	assert.NoError(t, err)
+	assert.Equal(t, "Go to hell, RunAt", got)
+}
