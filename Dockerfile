@@ -4,6 +4,8 @@ FROM golang:1.25.5-alpine
 
 WORKDIR /app
 
+ARG bin_to_build
+
 COPY go.mod go.sum ./
 
 RUN --mount=type=cache,target=/go/pkg/mod \
@@ -11,7 +13,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 COPY . .
 
-RUN go build -o svr cmd/httpserver/*.go
+RUN go build -o svr cmd/${bin_to_build}/*.go
 
 EXPOSE 8080
 CMD [ "./svr" ]
