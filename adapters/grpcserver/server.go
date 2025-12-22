@@ -2,7 +2,6 @@ package grpcserver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/runattekky/go-specs-greet/domain/interactions"
 )
@@ -16,5 +15,5 @@ func (g GreetServer) Greet(ctx context.Context, request *GreetRequest) (*GreetRe
 }
 
 func (g GreetServer) Curse(ctx context.Context, request *GreetRequest) (*GreetReply, error) {
-	return &GreetReply{Message: fmt.Sprintf("Go to hell, %s", request.Name)}, nil
+	return &GreetReply{Message: interactions.Curse(request.Name)}, nil
 }
