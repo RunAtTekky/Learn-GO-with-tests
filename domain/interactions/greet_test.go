@@ -13,3 +13,12 @@ func TestGreet(t *testing.T) {
 		specifications.GreetAdapter(interactions.Greet),
 	)
 }
+
+func TestGreetEmpty(t *testing.T) {
+	got := interactions.Greet("")
+	want := "Hello, World"
+
+	if got != want {
+		t.Fatalf("want %s but got %s", want, got)
+	}
+}
