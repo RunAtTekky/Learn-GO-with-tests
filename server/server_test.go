@@ -72,13 +72,18 @@ func TestStoreWins(t *testing.T) {
 	}
 	svr := &server.PlayerServer{&store}
 	t.Run("records win when POST", func(t *testing.T) {
-		request := newPostWinRequest("RunAt")
+		player := "Messi"
+		request := newPostWinRequest(player)
 		response := httptest.NewRecorder()
 		svr.ServeHTTP(response, request)
 		assertStatus(t, response.Code, http.StatusAccepted)
 
 		if len(store.winCalls) != 1 {
-			t.Errorf("got %d but want %d", len(store.winCalls), 1)
+			t.Fatalf("got %d but want %d", len(store.winCalls), 1)
+		}
+
+		if store.winCalls[0] != player {
+			t.Errorf("got %s but want %s", store.winCalls[0], player)
 		}
 	})
 }
