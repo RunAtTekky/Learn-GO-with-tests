@@ -9,10 +9,16 @@ import (
 func PlayerServer(writer http.ResponseWriter, request *http.Request) {
 	player := strings.TrimPrefix(request.URL.Path, "/players/")
 
+	fmt.Fprint(writer, GetPlayerScore(player))
+
+}
+
+func GetPlayerScore(player string) string {
 	switch player {
 	case "RunAt":
-		fmt.Fprint(writer, "20")
+		return "20"
 	case "Messi":
-		fmt.Fprint(writer, "8")
+		return "8"
 	}
+	return ""
 }
