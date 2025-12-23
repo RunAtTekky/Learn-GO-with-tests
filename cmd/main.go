@@ -1,12 +1,13 @@
 package main
 
 import (
-	goapp "github.com/runattekky/go-app"
 	"log"
 	"net/http"
+
+	"github.com/runattekky/go-app/server"
 )
 
 func main() {
-	handler := http.HandlerFunc(goapp.PlayerServer)
-	log.Fatal(http.ListenAndServe(":5000", handler))
+	svr := &server.PlayerServer{}
+	log.Fatal(http.ListenAndServe(":5000", svr))
 }
