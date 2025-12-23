@@ -1,12 +1,10 @@
-package server_test
+package main
 
 import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/runattekky/go-app/server"
 )
 
 type StubPlayerStore struct {
@@ -33,7 +31,7 @@ func TestGETPlayers(t *testing.T) {
 		[]string{},
 	}
 
-	svr := &server.PlayerServer{Store: &store}
+	svr := &PlayerServer{Store: &store}
 
 	t.Run("Return RunAt's Score", func(t *testing.T) {
 		request := newGetScoreRequest("RunAt")
@@ -70,7 +68,7 @@ func TestStoreWins(t *testing.T) {
 		map[string]int{},
 		[]string{},
 	}
-	svr := &server.PlayerServer{&store}
+	svr := &PlayerServer{&store}
 	t.Run("records win when POST", func(t *testing.T) {
 		player := "Messi"
 		request := newPostWinRequest(player)
