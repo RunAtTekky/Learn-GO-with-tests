@@ -35,6 +35,7 @@ func TestGETPlayers(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
+		assertStatus(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "20")
 	})
 
@@ -44,6 +45,7 @@ func TestGETPlayers(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
+		assertStatus(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "8")
 	})
 
@@ -53,12 +55,7 @@ func TestGETPlayers(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
-		got := response.Code
-		want := http.StatusNotFound
-
-		if got != want {
-			t.Errorf("got %d but want %d", got, want)
-		}
+		assertStatus(t, response.Code, http.StatusNotFound)
 	})
 }
 
@@ -68,7 +65,15 @@ func newGetScoreRequest(name string) *http.Request {
 }
 
 func assertResponseBody(t testing.TB, got, want string) {
+	t.Helper()
 	if got != want {
 		t.Errorf("got %q but want %q", got, want)
+	}
+}
+
+func assertStatus(t testing.TB, got, want int) {
+	t.Helper()
+	if got != want {
+		t.Errorf("Did not get correct STATUS, got %d but want %d", got, want)
 	}
 }
