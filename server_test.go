@@ -23,14 +23,12 @@ func (s *StubPlayerStore) RecordWin(name string) {
 
 func TestLeague(t *testing.T) {
 	store := StubPlayerStore{}
-	svr := &PlayerServer{Store: &store}
+	svr := NewPlayerServer(&store)
 	t.Run("Returns 200 on /league", func(t *testing.T) {
-
 		request, _ := http.NewRequest(http.MethodGet, "/league", nil)
 		response := httptest.NewRecorder()
 
 		svr.ServeHTTP(response, request)
-
 		assertStatus(t, response.Code, http.StatusOK)
 	})
 }
@@ -45,7 +43,7 @@ func TestGETPlayers(t *testing.T) {
 		[]string{},
 	}
 
-	svr := &PlayerServer{Store: &store}
+	svr := NewPlayerServer(&store)
 
 	t.Run("Return RunAt's Score", func(t *testing.T) {
 		request := newGetScoreRequest("RunAt")
@@ -82,7 +80,7 @@ func TestStoreWins(t *testing.T) {
 		map[string]int{},
 		[]string{},
 	}
-	svr := &PlayerServer{&store}
+	svr := NewPlayerServer(&store)
 	t.Run("records win when POST", func(t *testing.T) {
 		player := "Messi"
 		request := newPostWinRequest(player)
