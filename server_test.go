@@ -45,15 +45,19 @@ func TestLeague(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
-		if response.Result().Header.Get("content-type") != "application/json" {
-			t.Errorf("response did not have content-type of application/json, got %v", response.Result().Header)
-		}
-
 		got := getLeagueFromResponse(t, response.Body)
 
-		assertLeague(t, got, wantedLeague)
 		assertStatus(t, response.Code, http.StatusOK)
+		assertContentType(t, response, jsonContentType)
+		assertLeague(t, got, wantedLeague)
 	})
+}
+
+func assertContentType(t testing.TB, response *httptest.ResponseRecorder, want string) {
+	t.Helper()
+	if response.Result().Header.Get("content-type") != want {
+		t.Errorf("response is not of type %s, got %v", want, response.Result().Header)
+	}
 }
 
 func getLeagueFromResponse(t testing.TB, body io.Reader) []Player {
