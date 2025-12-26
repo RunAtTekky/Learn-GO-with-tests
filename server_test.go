@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -62,12 +61,7 @@ func assertContentType(t testing.TB, response *httptest.ResponseRecorder, want s
 
 func getLeagueFromResponse(t testing.TB, body io.Reader) []Player {
 	t.Helper()
-	var league []Player
-	err := json.NewDecoder(body).Decode(&league)
-
-	if err != nil {
-		t.Fatalf("Unable to parse response from server, %q into slice of Player. %v", body, err)
-	}
+	league, _ := NewLeague(body)
 	return league
 }
 
