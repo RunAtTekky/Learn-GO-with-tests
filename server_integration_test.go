@@ -14,11 +14,27 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	svr.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
 	svr.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
 
-	response := httptest.NewRecorder()
-	request := newGetScoreRequest(player)
+	t.Run("get score", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		request := newGetScoreRequest(player)
 
-	svr.ServeHTTP(response, request)
+		svr.ServeHTTP(response, request)
 
-	assertStatus(t, response.Code, http.StatusOK)
-	assertResponseBody(t, response.Body.String(), "3")
+		assertStatus(t, response.Code, http.StatusOK)
+		assertResponseBody(t, response.Body.String(), "3")
+	})
+
+	t.Run("get league", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		svr.ServeHTTP(response, newLeagueRequest())
+		assertStatus(t, response.Code, http.StatusOK)
+
+		got := getLeagueFromResponse(t, response.Body)
+		want := []Player{
+			{"RunAt", 3},
+		}
+
+		assertLeague(t, got, want)
+	})
+
 }
