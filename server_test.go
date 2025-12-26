@@ -1,15 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
 type StubPlayerStore struct {
 	scores   map[string]int
 	winCalls []string
+	league   []Player
 }
 
 func (s *StubPlayerStore) GetPlayerScore(name string) int {
@@ -22,13 +25,32 @@ func (s *StubPlayerStore) RecordWin(name string) {
 }
 
 func TestLeague(t *testing.T) {
-	store := StubPlayerStore{}
-	svr := NewPlayerServer(&store)
 	t.Run("Returns 200 on /league", func(t *testing.T) {
+		wantedLeague := []Player{
+			{"RunAt", 10},
+			{"Ronaldo", 5},
+			// {"Messi", 8},
+		}
+
+		store := StubPlayerStore{nil, nil, wantedLeague}
+		svr := NewPlayerServer(&store)
+
 		request, _ := http.NewRequest(http.MethodGet, "/league", nil)
 		response := httptest.NewRecorder()
 
 		svr.ServeHTTP(response, request)
+
+		var got []Player
+		err := json.NewDecoder(response.Body).Decode(&got)
+
+		if err != nil {
+			t.Fatalf("Unable to parse response from server, %q into slice of Player. %v", response.Body, err)
+		}
+
+		if !reflect.DeepEqual(got, wantedLeague) {
+			t.Errorf("got %v but want %v", got, wantedLeague)
+		}
+
 		assertStatus(t, response.Code, http.StatusOK)
 	})
 }
@@ -41,6 +63,7 @@ func TestGETPlayers(t *testing.T) {
 			"Messi":     8,
 		},
 		[]string{},
+		nil,
 	}
 
 	svr := NewPlayerServer(&store)
@@ -79,6 +102,7 @@ func TestStoreWins(t *testing.T) {
 	store := StubPlayerStore{
 		map[string]int{},
 		[]string{},
+		nil,
 	}
 	svr := NewPlayerServer(&store)
 	t.Run("records win when POST", func(t *testing.T) {
