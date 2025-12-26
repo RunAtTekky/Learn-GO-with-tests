@@ -24,6 +24,10 @@ func (s *StubPlayerStore) RecordWin(name string) {
 	s.winCalls = append(s.winCalls, name)
 }
 
+func (s *StubPlayerStore) GetLeague() []Player {
+	return s.league
+}
+
 func TestLeague(t *testing.T) {
 	t.Run("Returns 200 on /league", func(t *testing.T) {
 		wantedLeague := []Player{
