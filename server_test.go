@@ -30,7 +30,7 @@ func (s *StubPlayerStore) GetLeague() League {
 
 func TestLeague(t *testing.T) {
 	t.Run("Returns 200 on /league", func(t *testing.T) {
-		wantedLeague := []Player{
+		wantedLeague := League{
 			{"RunAt", 10},
 			{"Ronaldo", 5},
 			// {"Messi", 8},
@@ -59,13 +59,13 @@ func assertContentType(t testing.TB, response *httptest.ResponseRecorder, want s
 	}
 }
 
-func getLeagueFromResponse(t testing.TB, body io.Reader) []Player {
+func getLeagueFromResponse(t testing.TB, body io.Reader) League {
 	t.Helper()
 	league, _ := NewLeague(body)
 	return league
 }
 
-func assertLeague(t testing.TB, got, want []Player) {
+func assertLeague(t testing.TB, got, want League) {
 	t.Helper()
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %v but want %v", got, want)
