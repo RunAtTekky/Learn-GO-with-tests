@@ -8,10 +8,12 @@ import (
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
-	database, cleanDatabase := createTempFile(t, "")
+	database, cleanDatabase := createTempFile(t, "[]")
 	defer cleanDatabase()
 
-	store := NewFileSystemPlayerStore(database.(*os.File))
+	store, err := NewFileSystemPlayerStore(database.(*os.File))
+	assertNoError(t, err)
+
 	svr := NewPlayerServer(store)
 	player := "RunAt"
 
