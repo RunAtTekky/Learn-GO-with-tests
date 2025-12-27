@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -10,7 +11,7 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	database, cleanDatabase := createTempFile(t, "")
 	defer cleanDatabase()
 
-	store := NewFileSystemPlayerStore(database)
+	store := NewFileSystemPlayerStore(database.(*os.File))
 	svr := NewPlayerServer(store)
 	player := "RunAt"
 
