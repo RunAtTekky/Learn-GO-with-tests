@@ -20,6 +20,6 @@ func main() {
 	}
 
 	store, err := poker.NewFileSystemPlayerStore(db)
-	cli := poker.CLI{store, os.Stdin}
+	cli := poker.NewCLI(store, os.Stdin)
 	cli.PlayPoker()
 }

@@ -9,7 +9,7 @@ func TestCLI(t *testing.T) {
 	t.Run("record RunAt win from user input", func(t *testing.T) {
 		in := strings.NewReader("RunAt wins\n")
 		playerStore := &StubPlayerStore{}
-		cli := &CLI{playerStore, in}
+		cli := NewCLI(playerStore, in)
 		cli.PlayPoker()
 
 		if len(playerStore.winCalls) != 1 {
@@ -22,7 +22,7 @@ func TestCLI(t *testing.T) {
 	t.Run("record Ronaldo win from user input", func(t *testing.T) {
 		in := strings.NewReader("Ronaldo wins\n")
 		playerStore := &StubPlayerStore{}
-		cli := &CLI{playerStore, in}
+		cli := NewCLI(playerStore, in)
 		cli.PlayPoker()
 
 		if len(playerStore.winCalls) != 1 {
