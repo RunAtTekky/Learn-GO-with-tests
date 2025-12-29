@@ -6,14 +6,29 @@ import (
 )
 
 func TestCLI(t *testing.T) {
-	in := strings.NewReader("RunAt wins\n")
-	playerStore := &StubPlayerStore{}
-	cli := &CLI{playerStore, in}
-	cli.PlayPoker()
+	t.Run("record RunAt win from user input", func(t *testing.T) {
+		in := strings.NewReader("RunAt wins\n")
+		playerStore := &StubPlayerStore{}
+		cli := &CLI{playerStore, in}
+		cli.PlayPoker()
 
-	if len(playerStore.winCalls) != 1 {
-		t.Fatal("Expected a win call but did not get any")
-	}
+		if len(playerStore.winCalls) != 1 {
+			t.Fatal("Expected a win call but did not get any")
+		}
 
-	assertPlayerWin(t, playerStore, "RunAt")
+		assertPlayerWin(t, playerStore, "RunAt")
+	})
+
+	t.Run("record Ronaldo win from user input", func(t *testing.T) {
+		in := strings.NewReader("Ronaldo wins\n")
+		playerStore := &StubPlayerStore{}
+		cli := &CLI{playerStore, in}
+		cli.PlayPoker()
+
+		if len(playerStore.winCalls) != 1 {
+			t.Fatal("Expected a win call but did not get any")
+		}
+
+		assertPlayerWin(t, playerStore, "Ronaldo")
+	})
 }
