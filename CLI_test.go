@@ -16,7 +16,7 @@ func TestCLI(t *testing.T) {
 			t.Fatal("Expected a win call but did not get any")
 		}
 
-		assertPlayerWin(t, playerStore, "RunAt")
+		AssertPlayerWin(t, playerStore, "RunAt")
 	})
 
 	t.Run("record Ronaldo win from user input", func(t *testing.T) {
@@ -29,6 +29,6 @@ func TestCLI(t *testing.T) {
 			t.Fatal("Expected a win call but did not get any")
 		}
 
-		assertPlayerWin(t, playerStore, "Ronaldo")
+		AssertPlayerWin(t, playerStore, "Ronaldo")
 	})
 }

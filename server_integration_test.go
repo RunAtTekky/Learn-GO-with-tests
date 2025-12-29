@@ -12,7 +12,7 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	defer cleanDatabase()
 
 	store, err := NewFileSystemPlayerStore(database.(*os.File))
-	assertNoError(t, err)
+	AssertNoError(t, err)
 
 	svr := NewPlayerServer(store)
 	player := "RunAt"
@@ -27,21 +27,21 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
-		assertStatus(t, response.Code, http.StatusOK)
-		assertResponseBody(t, response.Body.String(), "3")
+		AssertStatus(t, response.Code, http.StatusOK)
+		AssertResponseBody(t, response.Body.String(), "3")
 	})
 
 	t.Run("get league", func(t *testing.T) {
 		response := httptest.NewRecorder()
 		svr.ServeHTTP(response, newLeagueRequest())
-		assertStatus(t, response.Code, http.StatusOK)
+		AssertStatus(t, response.Code, http.StatusOK)
 
 		got := getLeagueFromResponse(t, response.Body)
 		want := League{
 			{"RunAt", 3},
 		}
 
-		assertLeague(t, got, want)
+		AssertLeague(t, got, want)
 	})
 
 }
