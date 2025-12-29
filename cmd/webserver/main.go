@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	poker "github.com/runattekky/go-app"
 )
 
 const dbFileName = "game.db.json"
@@ -15,12 +17,12 @@ func main() {
 		log.Fatalf("Problem opening %s %v", dbFileName, err)
 	}
 
-	store, err := NewFileSystemPlayerStore(db)
+	store, err := poker.NewFileSystemPlayerStore(db)
 	if err != nil {
 		log.Fatalf("Error getting store from file %s, %v", db.Name(), err)
 	}
 
-	svr := NewPlayerServer(store)
+	svr := poker.NewPlayerServer(store)
 	if err := http.ListenAndServe(":5000", svr); err != nil {
 		log.Fatalf("Could not listen on PORT :5000 %v", err)
 	}
