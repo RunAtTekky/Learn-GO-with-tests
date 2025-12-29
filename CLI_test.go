@@ -15,10 +15,5 @@ func TestCLI(t *testing.T) {
 		t.Fatal("Expected a win call but did not get any")
 	}
 
-	got := playerStore.winCalls[0]
-	want := "RunAt"
-
-	if got != want {
-		t.Errorf("did not record correct winner, got %s but want %s", got, want)
-	}
+	assertPlayerWin(t, playerStore, "RunAt")
 }

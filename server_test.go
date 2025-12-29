@@ -134,13 +134,7 @@ func TestStoreWins(t *testing.T) {
 		svr.ServeHTTP(response, request)
 		assertStatus(t, response.Code, http.StatusAccepted)
 
-		if len(store.winCalls) != 1 {
-			t.Fatalf("got %d but want %d", len(store.winCalls), 1)
-		}
-
-		if store.winCalls[0] != player {
-			t.Errorf("got %s but want %s", store.winCalls[0], player)
-		}
+		assertPlayerWin(t, &store, player)
 	})
 }
 
@@ -165,5 +159,16 @@ func assertStatus(t testing.TB, got, want int) {
 	t.Helper()
 	if got != want {
 		t.Errorf("Did not get correct STATUS, got %d but want %d", got, want)
+	}
+}
+
+func assertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
+	t.Helper()
+	if len(store.winCalls) != 1 {
+		t.Fatalf("got %d but want %d", len(store.winCalls), 1)
+	}
+
+	if store.winCalls[0] != winner {
+		t.Errorf("got %s but want %s", store.winCalls[0], winner)
 	}
 }
