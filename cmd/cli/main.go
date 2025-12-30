@@ -11,15 +11,13 @@ import (
 const dbFileName = "game.db.json"
 
 func main() {
+	store, close, err := poker.FileSystemPlayerStoreFromFile(dbFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer close()
+
 	fmt.Println("Let's play poker")
 	fmt.Println("Type '{Name} wins' to record win")
-
-	db, err := os.OpenFile(dbFileName, os.O_RDWR|os.O_CREATE, 0666)
-	if err != nil {
-		log.Fatalf("problem opening file %s %v", dbFileName, err)
-	}
-
-	store, err := poker.NewFileSystemPlayerStore(db)
-	cli := poker.NewCLI(store, os.Stdin)
-	cli.PlayPoker()
+	poker.NewCLI(store, os.Stdin).PlayPoker()
 }
