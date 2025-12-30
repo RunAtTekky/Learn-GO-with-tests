@@ -1,6 +1,7 @@
 package poker_test
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"testing"
@@ -8,6 +9,11 @@ import (
 
 	poker "github.com/runattekky/go-app"
 )
+
+var dummyBlindAlerter = &SpyBlindAlerter{}
+var dummyPlayerStore = &poker.StubPlayerStore{}
+var dummyStdIn = &bytes.Buffer{}
+var dummyStdOut = &bytes.Buffer{}
 
 type scheduledAlert struct {
 	at     time.Duration
@@ -31,7 +37,7 @@ func TestCLI(t *testing.T) {
 		in := strings.NewReader("RunAt wins\n")
 		playerStore := &poker.StubPlayerStore{}
 		dummySpyAlerter := &SpyBlindAlerter{}
-		cli := poker.NewCLI(playerStore, in, dummySpyAlerter)
+		cli := poker.NewCLI(playerStore, in, dummyStdOut, dummySpyAlerter)
 		cli.PlayPoker()
 
 		poker.AssertPlayerWin(t, playerStore, "RunAt")
@@ -41,7 +47,7 @@ func TestCLI(t *testing.T) {
 		in := strings.NewReader("Ronaldo wins\n")
 		playerStore := &poker.StubPlayerStore{}
 		dummySpyAlerter := &SpyBlindAlerter{}
-		cli := poker.NewCLI(playerStore, in, dummySpyAlerter)
+		cli := poker.NewCLI(playerStore, in, dummyStdOut, dummySpyAlerter)
 		cli.PlayPoker()
 
 		poker.AssertPlayerWin(t, playerStore, "Ronaldo")
@@ -51,7 +57,7 @@ func TestCLI(t *testing.T) {
 		in := strings.NewReader("Mbappe wins\n")
 		playerStore := &poker.StubPlayerStore{}
 		blindAlerter := &SpyBlindAlerter{}
-		cli := poker.NewCLI(playerStore, in, blindAlerter)
+		cli := poker.NewCLI(playerStore, in, dummyStdOut, blindAlerter)
 		cli.PlayPoker()
 
 		cases := []scheduledAlert{
@@ -77,6 +83,20 @@ func TestCLI(t *testing.T) {
 				gotAlert := blindAlerter.alerts[i]
 				assertScheduledAlert(t, gotAlert, want)
 			})
+		}
+	})
+
+	t.Run("it prompts the user to enter number of players", func(t *testing.T) {
+		stdout := &bytes.Buffer{}
+		cli := poker.NewCLI(dummyPlayerStore, dummyStdIn, stdout, dummyBlindAlerter)
+
+		cli.PlayPoker()
+
+		got := stdout.String()
+		want := "Please enter the number of players:"
+
+		if got != want {
+			t.Errorf("got %q but want %q", got, want)
 		}
 	})
 }
