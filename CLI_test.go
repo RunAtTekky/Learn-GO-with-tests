@@ -34,7 +34,7 @@ func (s *SpyBlindAlerter) ScheduleAlertAt(duration time.Duration, amount int) {
 
 func TestCLI(t *testing.T) {
 	t.Run("record RunAt win from user input", func(t *testing.T) {
-		in := strings.NewReader("RunAt wins\n")
+		in := strings.NewReader("1\nRunAt wins\n")
 		playerStore := &poker.StubPlayerStore{}
 		dummySpyAlerter := &SpyBlindAlerter{}
 		cli := poker.NewCLI(playerStore, in, dummyStdOut, dummySpyAlerter)
@@ -44,7 +44,7 @@ func TestCLI(t *testing.T) {
 	})
 
 	t.Run("record Ronaldo win from user input", func(t *testing.T) {
-		in := strings.NewReader("Ronaldo wins\n")
+		in := strings.NewReader("1\nRonaldo wins\n")
 		playerStore := &poker.StubPlayerStore{}
 		dummySpyAlerter := &SpyBlindAlerter{}
 		cli := poker.NewCLI(playerStore, in, dummyStdOut, dummySpyAlerter)
@@ -54,7 +54,7 @@ func TestCLI(t *testing.T) {
 	})
 
 	t.Run("it schedules printing of blind values", func(t *testing.T) {
-		in := strings.NewReader("Mbappe wins\n")
+		in := strings.NewReader("5\nMbappe wins\n")
 		playerStore := &poker.StubPlayerStore{}
 		blindAlerter := &SpyBlindAlerter{}
 		cli := poker.NewCLI(playerStore, in, dummyStdOut, blindAlerter)
