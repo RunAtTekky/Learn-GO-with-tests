@@ -15,6 +15,19 @@ var dummyPlayerStore = &poker.StubPlayerStore{}
 var dummyStdIn = &bytes.Buffer{}
 var dummyStdOut = &bytes.Buffer{}
 
+type GameSpy struct {
+	StartedWith  int
+	FinishedWith string
+}
+
+func (g *GameSpy) Start(numberOfPlayers int) {
+	g.StartedWith = numberOfPlayers
+}
+
+func (g *GameSpy) Finish(winner string) {
+	g.FinishedWith = winner
+}
+
 type scheduledAlert struct {
 	at     time.Duration
 	amount int
@@ -55,6 +68,26 @@ func TestCLI(t *testing.T) {
 		cli.PlayPoker()
 
 		poker.AssertPlayerWin(t, playerStore, "Ronaldo")
+	})
+
+	t.Run("prompts the user to enter number of players and starts the game", func(t *testing.T) {
+		stdout := &bytes.Buffer{}
+		in := strings.NewReader("7\n")
+		game := &GameSpy{}
+
+		cli := poker.NewCLI(in, stdout, game)
+		cli.PlayPoker()
+
+		gotPrompt := stdout.String()
+		wantPrompt := poker.PlayerPrompt
+
+		if gotPrompt != wantPrompt {
+			t.Errorf("got %s but want %s", gotPrompt, wantPrompt)
+		}
+
+		if game.StartedWith != 7 {
+			t.Errorf("wanted start called with 7 but got %d", game.StartedWith)
+		}
 	})
 
 }
