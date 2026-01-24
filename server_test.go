@@ -9,6 +9,19 @@ import (
 	"testing"
 )
 
+func TestGame(t *testing.T) {
+	t.Run("GET /game returns 200", func(t *testing.T) {
+		svr := NewPlayerServer(&StubPlayerStore{})
+
+		request, _ := http.NewRequest(http.MethodGet, "/game", nil)
+		response := httptest.NewRecorder()
+
+		svr.ServeHTTP(response, request)
+
+		AssertStatus(t, response.Code, http.StatusOK)
+	})
+}
+
 func TestLeague(t *testing.T) {
 	t.Run("Returns 200 on /league", func(t *testing.T) {
 		wantedLeague := League{
