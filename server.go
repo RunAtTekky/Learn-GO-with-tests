@@ -48,7 +48,11 @@ func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
 		WriteBufferSize: 1024,
 	}
 
-	upgrader.Upgrade(w, r, nil)
+	conn, _ := upgrader.Upgrade(w, r, nil)
+
+	_, winnerMsg, _ := conn.ReadMessage()
+
+	p.store.RecordWin(string(winnerMsg))
 }
 
 func (p *PlayerServer) game(w http.ResponseWriter, r *http.Request) {
