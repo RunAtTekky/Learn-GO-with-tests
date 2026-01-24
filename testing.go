@@ -41,10 +41,10 @@ func AssertStatus(t testing.TB, got *httptest.ResponseRecorder, want int) {
 func AssertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
 	t.Helper()
 	if len(store.winCalls) != 1 {
-		t.Fatalf("got %d but want %d", len(store.winCalls), 1)
+		t.Fatalf("got %d calls to record win but want %d", len(store.winCalls), 1)
 	}
 
 	if store.winCalls[0] != winner {
-		t.Errorf("got %s but want %s", store.winCalls[0], winner)
+		t.Errorf("got %s calls to record win but want %s", store.winCalls[0], winner)
 	}
 }
