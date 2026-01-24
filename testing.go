@@ -1,6 +1,9 @@
 package poker
 
-import "testing"
+import (
+	"net/http/httptest"
+	"testing"
+)
 
 type StubPlayerStore struct {
 	scores   map[string]int
@@ -28,10 +31,10 @@ func AssertResponseBody(t testing.TB, got, want string) {
 	}
 }
 
-func AssertStatus(t testing.TB, got, want int) {
+func AssertStatus(t testing.TB, got *httptest.ResponseRecorder, want int) {
 	t.Helper()
-	if got != want {
-		t.Errorf("Did not get correct STATUS, got %d but want %d", got, want)
+	if got.Result().StatusCode != want {
+		t.Errorf("Did not get correct STATUS, got %d but want %d", got.Result().StatusCode, want)
 	}
 }
 

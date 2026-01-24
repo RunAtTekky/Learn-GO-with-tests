@@ -13,13 +13,18 @@ func TestGame(t *testing.T) {
 	t.Run("GET /game returns 200", func(t *testing.T) {
 		svr := NewPlayerServer(&StubPlayerStore{})
 
-		request, _ := http.NewRequest(http.MethodGet, "/game", nil)
+		request := newGameRequest()
 		response := httptest.NewRecorder()
 
 		svr.ServeHTTP(response, request)
 
-		AssertStatus(t, response.Code, http.StatusOK)
+		AssertStatus(t, response, http.StatusOK)
 	})
+}
+
+func newGameRequest() *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, "/game", nil)
+	return req
 }
 
 func TestLeague(t *testing.T) {
@@ -40,7 +45,7 @@ func TestLeague(t *testing.T) {
 
 		got := getLeagueFromResponse(t, response.Body)
 
-		AssertStatus(t, response.Code, http.StatusOK)
+		AssertStatus(t, response, http.StatusOK)
 		AssertContentType(t, response, jsonContentType)
 		AssertLeague(t, got, wantedLeague)
 	})
@@ -90,7 +95,7 @@ func TestGETPlayers(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
-		AssertStatus(t, response.Code, http.StatusOK)
+		AssertStatus(t, response, http.StatusOK)
 		AssertResponseBody(t, response.Body.String(), "20")
 	})
 
@@ -100,7 +105,7 @@ func TestGETPlayers(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
-		AssertStatus(t, response.Code, http.StatusOK)
+		AssertStatus(t, response, http.StatusOK)
 		AssertResponseBody(t, response.Body.String(), "8")
 	})
 
@@ -110,7 +115,7 @@ func TestGETPlayers(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
-		AssertStatus(t, response.Code, http.StatusNotFound)
+		AssertStatus(t, response, http.StatusNotFound)
 	})
 }
 
@@ -126,7 +131,7 @@ func TestStoreWins(t *testing.T) {
 		request := newPostWinRequest(player)
 		response := httptest.NewRecorder()
 		svr.ServeHTTP(response, request)
-		AssertStatus(t, response.Code, http.StatusAccepted)
+		AssertStatus(t, response, http.StatusAccepted)
 
 		AssertPlayerWin(t, &store, player)
 	})
