@@ -14,7 +14,11 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	store, err := NewFileSystemPlayerStore(database.(*os.File))
 	AssertNoError(t, err)
 
-	svr := NewPlayerServer(store)
+	svr, err := NewPlayerServer(store)
+	if err != nil {
+		t.Fatalf("Problem creating player server %v", err)
+	}
+
 	player := "RunAt"
 
 	svr.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))

@@ -15,7 +15,7 @@ import (
 
 func TestGame(t *testing.T) {
 	t.Run("GET /game returns 200", func(t *testing.T) {
-		svr := NewPlayerServer(&StubPlayerStore{})
+		svr := mustMakePlayerServer(t, &StubPlayerStore{})
 
 		request := newGameRequest()
 		response := httptest.NewRecorder()
@@ -29,7 +29,7 @@ func TestGame(t *testing.T) {
 		winner := "Ruth"
 
 		store := &StubPlayerStore{}
-		svr := httptest.NewServer(NewPlayerServer(store))
+		svr := httptest.NewServer(mustMakePlayerServer(t, store))
 		defer svr.Close()
 
 		wsURL := "ws" + strings.TrimPrefix(svr.URL, "http") + "/ws"
@@ -62,7 +62,7 @@ func TestLeague(t *testing.T) {
 		}
 
 		store := StubPlayerStore{nil, nil, wantedLeague}
-		svr := NewPlayerServer(&store)
+		svr := mustMakePlayerServer(t, &store)
 
 		request := newLeagueRequest()
 		response := httptest.NewRecorder()
@@ -113,7 +113,7 @@ func TestGETPlayers(t *testing.T) {
 		nil,
 	}
 
-	svr := NewPlayerServer(&store)
+	svr := mustMakePlayerServer(t, &store)
 
 	t.Run("Return RunAt's Score", func(t *testing.T) {
 		request := newGetScoreRequest("RunAt")
@@ -151,7 +151,7 @@ func TestStoreWins(t *testing.T) {
 		[]string{},
 		nil,
 	}
-	svr := NewPlayerServer(&store)
+	svr := mustMakePlayerServer(t, &store)
 	t.Run("records win when POST", func(t *testing.T) {
 		player := "Messi"
 		request := newPostWinRequest(player)
@@ -171,4 +171,13 @@ func newPostWinRequest(name string) *http.Request {
 func newGetScoreRequest(name string) *http.Request {
 	request, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
 	return request
+}
+
+func mustMakePlayerServer(t *testing.T, store PlayerStore) *PlayerServer {
+	server, err := NewPlayerServer(store)
+	if err != nil {
+		t.Fatalf("Problem creating player server %v", err)
+	}
+
+	return server
 }
