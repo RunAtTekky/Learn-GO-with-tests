@@ -179,7 +179,7 @@ func newGetScoreRequest(name string) *http.Request {
 }
 
 func mustMakePlayerServer(t *testing.T, store poker.PlayerStore, game poker.Game) *poker.PlayerServer {
-	server, err := poker.NewPlayerServer(store, dummyGame)
+	server, err := poker.NewPlayerServer(store, game)
 	if err != nil {
 		t.Fatalf("Problem creating player server %v", err)
 	}
