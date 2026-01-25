@@ -33,6 +33,7 @@ func (g *GameSpy) Start(numberOfPlayers int, out io.Writer) {
 }
 
 func (g *GameSpy) Finish(winner string) {
+	g.FinishCalled = true
 	g.FinishCalledWith = winner
 }
 

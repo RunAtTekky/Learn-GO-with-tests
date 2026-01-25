@@ -50,11 +50,7 @@ func TestGame(t *testing.T) {
 		assertGameStartedWith(t, game, 3)
 		assertGameFinishedWith(t, game, winner)
 
-		_, gotBlindAlert, _ := ws.ReadMessage()
-
-		if string(gotBlindAlert) != wantedBlindAlert {
-			t.Errorf("got blind alert %q, but want %q", string(gotBlindAlert), wantedBlindAlert)
-		}
+		within(t, tenMS, func() { assertWebSocketGotMsg(t, ws, wantedBlindAlert) })
 	})
 }
 
@@ -220,4 +216,27 @@ func assertResponseBody(t *testing.T, got, want string) {
 	if got != want {
 		t.Errorf("Response body is wrong, got %q but want %q", got, want)
 	}
+}
+
+func within(t testing.TB, d time.Duration, assert func()) {
+	t.Helper()
+	done := make(chan struct{}, 1)
+	go func() {
+		assert()
+		done <- struct{}{}
+	}()
+
+	select {
+	case <-time.After(d):
+		t.Error("Timed out")
+	case <-done:
+	}
+}
+
+func assertWebSocketGotMsg(t *testing.T, ws *websocket.Conn, want string) {
+	_, msg, _ := ws.ReadMessage()
+	if string(msg) != want {
+		t.Errorf("got %q but want %q", string(msg), want)
+	}
+
 }
