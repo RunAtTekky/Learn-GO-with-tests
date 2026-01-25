@@ -46,7 +46,6 @@ func TestGame(t *testing.T) {
 		writeWSMessage(t, ws, "3")
 		writeWSMessage(t, ws, winner)
 
-		time.Sleep(tenMS)
 		assertGameStartedWith(t, game, 3)
 		assertGameFinishedWith(t, game, winner)
 
