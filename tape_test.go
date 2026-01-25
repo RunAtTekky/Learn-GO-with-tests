@@ -1,16 +1,18 @@
-package poker
+package poker_test
 
 import (
 	"io"
 	"os"
 	"testing"
+
+	poker "github.com/runattekky/go-app"
 )
 
 func TestTapeWrite(t *testing.T) {
 	file, clean := createTempFile(t, "12345")
 	defer clean()
 
-	tape := tape{file.(*os.File)}
+	tape := poker.Tape{file.(*os.File)}
 	tape.Write([]byte("abc"))
 
 	file.Seek(0, io.SeekStart)

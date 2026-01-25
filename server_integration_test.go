@@ -1,20 +1,22 @@
-package poker
+package poker_test
 
 import (
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	poker "github.com/runattekky/go-app"
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	database, cleanDatabase := createTempFile(t, "[]")
 	defer cleanDatabase()
 
-	store, err := NewFileSystemPlayerStore(database.(*os.File))
+	store, err := poker.NewFileSystemPlayerStore(database.(*os.File))
 	AssertNoError(t, err)
 
-	svr, err := NewPlayerServer(store)
+	svr, err := poker.NewPlayerServer(store)
 	if err != nil {
 		t.Fatalf("Problem creating player server %v", err)
 	}
@@ -31,17 +33,17 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 
 		svr.ServeHTTP(response, request)
 
-		AssertStatus(t, response, http.StatusOK)
-		AssertResponseBody(t, response.Body.String(), "3")
+		assertStatus(t, response, http.StatusOK)
+		assertResponseBody(t, response.Body.String(), "3")
 	})
 
 	t.Run("get league", func(t *testing.T) {
 		response := httptest.NewRecorder()
 		svr.ServeHTTP(response, newLeagueRequest())
-		AssertStatus(t, response, http.StatusOK)
+		assertStatus(t, response, http.StatusOK)
 
 		got := getLeagueFromResponse(t, response.Body)
-		want := League{
+		want := poker.League{
 			{"RunAt", 3},
 		}
 

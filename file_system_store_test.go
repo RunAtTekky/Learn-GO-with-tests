@@ -1,9 +1,11 @@
-package poker
+package poker_test
 
 import (
 	"io"
 	"os"
 	"testing"
+
+	poker "github.com/runattekky/go-app"
 )
 
 func TestFileSystemStore(t *testing.T) {
@@ -13,11 +15,11 @@ func TestFileSystemStore(t *testing.T) {
 		{"Name": "Ronaldo", "Wins": 5}]`)
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database.(*os.File))
+		store, err := poker.NewFileSystemPlayerStore(database.(*os.File))
 		AssertNoError(t, err)
 		got := store.GetLeague()
 
-		want := League{
+		want := poker.League{
 			{"RunAt", 10},
 			{"Ronaldo", 5},
 		}
@@ -34,7 +36,7 @@ func TestFileSystemStore(t *testing.T) {
 		{"Name": "Ronaldo", "Wins": 5}]`)
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database.(*os.File))
+		store, err := poker.NewFileSystemPlayerStore(database.(*os.File))
 		AssertNoError(t, err)
 
 		got := store.GetPlayerScore("RunAt")
@@ -48,7 +50,7 @@ func TestFileSystemStore(t *testing.T) {
 		{"Name": "Ronaldo", "Wins": 5}]`)
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database.(*os.File))
+		store, err := poker.NewFileSystemPlayerStore(database.(*os.File))
 		AssertNoError(t, err)
 
 		store.RecordWin("RunAt")
@@ -64,7 +66,7 @@ func TestFileSystemStore(t *testing.T) {
 		{"Name": "Ronaldo", "Wins": 5}]`)
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database.(*os.File))
+		store, err := poker.NewFileSystemPlayerStore(database.(*os.File))
 		AssertNoError(t, err)
 
 		store.RecordWin("Messi")
@@ -78,7 +80,7 @@ func TestFileSystemStore(t *testing.T) {
 		database, cleanDatabase := createTempFile(t, "")
 		defer cleanDatabase()
 
-		_, err := NewFileSystemPlayerStore(database.(*os.File))
+		_, err := poker.NewFileSystemPlayerStore(database.(*os.File))
 		AssertNoError(t, err)
 	})
 
@@ -88,12 +90,12 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "RunAt", "Wins": 10}]`)
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database.(*os.File))
+		store, err := poker.NewFileSystemPlayerStore(database.(*os.File))
 		AssertNoError(t, err)
 
 		got := store.GetLeague()
 
-		want := League{
+		want := poker.League{
 			{Name: "RunAt", Wins: 10},
 			{Name: "Ronaldo", Wins: 5},
 		}
