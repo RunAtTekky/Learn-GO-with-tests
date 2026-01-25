@@ -16,7 +16,7 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	store, err := poker.NewFileSystemPlayerStore(database.(*os.File))
 	AssertNoError(t, err)
 
-	svr, err := poker.NewPlayerServer(store)
+	svr, err := poker.NewPlayerServer(store, dummyGame)
 	if err != nil {
 		t.Fatalf("Problem creating player server %v", err)
 	}
