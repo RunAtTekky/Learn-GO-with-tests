@@ -17,18 +17,23 @@ var dummyStdIn = &bytes.Buffer{}
 var dummyStdOut = &bytes.Buffer{}
 
 type GameSpy struct {
-	StartedWith  int
-	FinishedWith string
-	StartCalled  bool
+	StartCalled     bool
+	StartCalledWith int
+	BlindAlert      []byte
+
+	FinishCalled     bool
+	FinishCalledWith string
 }
 
-func (g *GameSpy) Start(numberOfPlayers int, alertsDestination io.Writer) {
-	g.StartedWith = numberOfPlayers
+func (g *GameSpy) Start(numberOfPlayers int, out io.Writer) {
 	g.StartCalled = true
+	g.StartCalledWith = numberOfPlayers
+
+	out.Write(g.BlindAlert)
 }
 
 func (g *GameSpy) Finish(winner string) {
-	g.FinishedWith = winner
+	g.FinishCalledWith = winner
 }
 
 type scheduledAlert struct {
@@ -173,15 +178,15 @@ func assertMessagesSentToUser(t testing.TB, stdout *bytes.Buffer, messages ...st
 
 func assertGameStartedWith(t testing.TB, game *GameSpy, want int) {
 	t.Helper()
-	if game.StartedWith != want {
-		t.Errorf("Game should have started with %d but got %d", want, game.StartedWith)
+	if game.StartCalledWith != want {
+		t.Errorf("Game should have started with %d but got %d", want, game.StartCalledWith)
 	}
 }
 
 func assertGameFinishedWith(t testing.TB, game *GameSpy, want string) {
 	t.Helper()
-	if game.FinishedWith != want {
-		t.Errorf("Game should have finished with %q but got %q", want, game.FinishedWith)
+	if game.FinishCalledWith != want {
+		t.Errorf("Game should have finished with %q but got %q", want, game.FinishCalledWith)
 	}
 }
 

@@ -32,9 +32,10 @@ func TestGame(t *testing.T) {
 	})
 
 	t.Run("start game with 3 players and declare RunAt as winner", func(t *testing.T) {
+		wantedBlindAlert := "Blind is 100"
 		winner := "RunAt"
 
-		game := &GameSpy{}
+		game := &GameSpy{BlindAlert: []byte(wantedBlindAlert)}
 		svr := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
 		wsURL := "ws" + strings.TrimPrefix(svr.URL, "http") + "/ws"
 		ws := mustDialWS(t, wsURL)
@@ -48,6 +49,12 @@ func TestGame(t *testing.T) {
 		time.Sleep(tenMS)
 		assertGameStartedWith(t, game, 3)
 		assertGameFinishedWith(t, game, winner)
+
+		_, gotBlindAlert, _ := ws.ReadMessage()
+
+		if string(gotBlindAlert) != wantedBlindAlert {
+			t.Errorf("got blind alert %q, but want %q", string(gotBlindAlert), wantedBlindAlert)
+		}
 	})
 }
 
