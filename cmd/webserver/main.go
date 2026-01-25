@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	poker "github.com/runattekky/go-app"
 )
@@ -10,14 +11,22 @@ import (
 const dbFileName = "game.db.json"
 
 func main() {
-	store, close, err := poker.FileSystemPlayerStoreFromFile(dbFileName)
+	db, err := os.OpenFile(dbFileName, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Problem opening the file %s %v", dbFileName, err)
 	}
-	defer close()
 
-	svr := poker.NewPlayerServer(store)
-	if err := http.ListenAndServe(":5000", svr); err != nil {
-		log.Fatalf("Could not listen on PORT :5000 %v", err)
+	store, err := poker.NewFileSystemPlayerStore(db)
+	if err != nil {
+		log.Fatalf("Problem creating file system from store, %v", err)
 	}
+
+	game := poker.NewGame(poker.BlindAlerterFunc(poker.Alerter), store)
+
+	svr, err := poker.NewPlayerServer(store, game)
+	if err != nil {
+		log.Fatalf("Problem creating player server %v", err)
+	}
+
+	log.Fatal(http.ListenAndServe(":5000", svr))
 }
