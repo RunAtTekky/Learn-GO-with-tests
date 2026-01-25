@@ -177,18 +177,39 @@ func assertMessagesSentToUser(t testing.TB, stdout *bytes.Buffer, messages ...st
 	}
 }
 
-func assertGameStartedWith(t testing.TB, game *GameSpy, want int) {
+func assertGameStartedWith(t testing.TB, game *GameSpy, numberOfPlayers int) {
 	t.Helper()
-	if game.StartCalledWith != want {
-		t.Errorf("Game should have started with %d but got %d", want, game.StartCalledWith)
+
+	passed := retryUntil(500*time.Millisecond, func() bool {
+		return game.StartCalledWith == numberOfPlayers
+	})
+
+	if !passed {
+		t.Errorf("Game should have started with %d but got %d", numberOfPlayers, game.StartCalledWith)
 	}
 }
 
-func assertGameFinishedWith(t testing.TB, game *GameSpy, want string) {
+func assertGameFinishedWith(t testing.TB, game *GameSpy, winner string) {
 	t.Helper()
-	if game.FinishCalledWith != want {
-		t.Errorf("Game should have finished with %q but got %q", want, game.FinishCalledWith)
+
+	passed := retryUntil(500*time.Millisecond, func() bool {
+		return game.FinishCalledWith == winner
+	})
+
+	if !passed {
+		t.Errorf("Game should have finished with %q but got %q", winner, game.FinishCalledWith)
 	}
+}
+
+func retryUntil(d time.Duration, f func() bool) bool {
+	deadline := time.Now().Add(d)
+	for time.Now().Before(deadline) {
+		if f() {
+			return true
+		}
+	}
+
+	return false
 }
 
 func userSends(inputs ...string) io.Reader {
